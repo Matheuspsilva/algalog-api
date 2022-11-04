@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.matheussilvadev.domain.model.Cliente;
 import com.matheussilvadev.domain.repository.ClienteRepository;
+import com.matheussilvadev.domain.service.CatalogoClienteService;
 
 import lombok.AllArgsConstructor;
 
@@ -29,6 +30,8 @@ public class ClienteController {
 	//Não é necessário usar autowired pois é feita injeção de dependência pelo método construtor
 	private ClienteRepository clienteRepository;
 	
+	private CatalogoClienteService catalogoClienteService;
+	
 	@GetMapping()
 	public List<Cliente> listarclientes() {
 		
@@ -39,7 +42,7 @@ public class ClienteController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cliente adicionar(@Valid @RequestBody Cliente cliente) {
 		
-		return clienteRepository.save(cliente);
+		return catalogoClienteService.salvar(cliente);
 	}
 	
 	
@@ -67,7 +70,7 @@ public class ClienteController {
 		}
 		
 		cliente.setId(clienteId);
-		cliente = clienteRepository.save(cliente);
+		cliente = catalogoClienteService.salvar(cliente);
 		
 		return ResponseEntity.ok(cliente);
 	
@@ -80,7 +83,7 @@ public class ClienteController {
 			ResponseEntity.notFound().build();
 		}
 	
-		clienteRepository.deleteById(clienteId);
+		catalogoClienteService.excluir(clienteId);
 		
 		return ResponseEntity.noContent().build();
 	
