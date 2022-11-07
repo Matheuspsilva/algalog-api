@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.matheussilvadev.domain.exception.EntidadeNaoEncontradaException;
 import com.matheussilvadev.domain.exception.NegocioException;
 
 import lombok.AllArgsConstructor;
@@ -46,6 +47,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 		problema.setTitulo("Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente!");
 		problema.setCampos(campos);
 		return super.handleExceptionInternal(ex, problema, headers, status, request);
+	}
+	
+	@ExceptionHandler(EntidadeNaoEncontradaException.class)
+	public ResponseEntity<Object> handleNegocio(EntidadeNaoEncontradaException ex, WebRequest request){
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		
+		Problema problema = new Problema();
+		problema.setStatus(status.value());
+		problema.setDataHora(OffsetDateTime.now());
+		problema.setTitulo(ex.getMessage());
+		
+		return super.handleExceptionInternal(ex, problema,new HttpHeaders(), status, request);
 	}
 	
 	@ExceptionHandler(NegocioException.class)
